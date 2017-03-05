@@ -37,3 +37,20 @@ config :logger, :console,
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"
 import_config "../apps/*/config/config.exs"
+
+defmacro import_config(path_or_wildcard) do
+    loaded_paths_quote =
+      unless {:loaded_paths, Mix.Config} in __CALLER__.vars do
+        quote do
+          var!(loaded_paths, Mix.Config) = [__ENV__.file]
+        end
+      end
+
+    quote do
+      unquote(loaded_paths_quote)
+      Mix.Config.Agent.merge(
+        var!(config_agent, Mix.Config),
+         Mix.Config.read_wildcard!(Path.expand(unquote(path_or_wildcard), __DIR__), var!(loaded_paths, Mix.Config))
+      )
+    end
+  end
