@@ -9,6 +9,17 @@ use Mix.Config
 config :api_blog,
   ecto_repos: [ApiBlog.Repo]
 
+  
+  
+config :heroku_test_app, HerokuTestApp.Endpoint,
+  secret_key_base: System.get_env("SECRET_KEY_BASE")
+
+# Configure your database
+config :heroku_test_app, HerokuTestApp.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  url: System.get_env("DATABASE_URL"),
+  size: 20 # The amount of database connections in the pool
+
 # Configures the endpoint
 config :api_blog, ApiBlog.Endpoint,
   url: [host: "localhost"],
